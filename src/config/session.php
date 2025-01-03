@@ -51,7 +51,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Session File Location
+    | Session File.php Location
     |--------------------------------------------------------------------------
     |
     | When utilizing the "file" session driver, the session files are placed

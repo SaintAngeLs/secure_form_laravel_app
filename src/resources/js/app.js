@@ -1,4 +1,5 @@
 import './bootstrap';
+import './dropzone.js'
 
 import Alpine from 'alpinejs';
 
