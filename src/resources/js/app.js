@@ -1,5 +1,6 @@
 import './bootstrap';
 import './dropzone.js'
+import './formEntrySubmit.js'
 
 import Alpine from 'alpinejs';
 

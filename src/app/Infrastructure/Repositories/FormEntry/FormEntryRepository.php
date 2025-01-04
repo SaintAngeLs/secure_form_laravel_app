@@ -13,12 +13,12 @@ class FormEntryRepository implements IFormEntryRepository
         return FormEntry::create([
             'first_name' => $formEntry->getFirstName(),
             'last_name' => $formEntry->getLastName(),
-            'file_path' => $formEntry->getFilePath(),
+            'file_id' => $formEntry->getFileId(),
         ]) ? true : false;
     }
 
     public function getAll(): array
     {
-        return FormEntry::all()->toArray();
+        return FormEntry::with('file')->get()->toArray();
     }
 }

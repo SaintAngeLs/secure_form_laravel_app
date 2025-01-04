@@ -19,18 +19,16 @@ class FileUploadController extends Controller
 
     public function upload(UploadFileRequest $request)
     {
-        $fileData = $this->fileService->uploadFile($request->file('file'));
+        try {
+            $fileData = $this->fileService->uploadFile($request->file('file'));
 
-        $file = File::create([
-            'name' => $fileData['name'],
-            'path' => $fileData['path'],
-            'extension' => $fileData['extension'],
-            'mime_type' => $fileData['mime_type'],
-            'size' => $fileData['size'],
-            'uploader_id' => Auth::id(),
-        ]);
-
-        return response()->json(['message' => 'File uploaded successfully', 'file' => $file], 201);
+            return response()->json([
+                'message' => 'File uploaded successfully',
+                'file_id' => $fileData['file_id'],
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function index()

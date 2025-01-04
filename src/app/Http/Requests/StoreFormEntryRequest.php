@@ -11,7 +11,7 @@ class StoreFormEntryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class StoreFormEntryRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'file' => 'required|image|max:2048',
+            'file_id' => 'required|integer|exists:files,id',
         ];
     }
 }

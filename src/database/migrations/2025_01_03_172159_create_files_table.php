@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('path');
             $table->string('extension');
             $table->string('mime_type');
-            $table->unsignedBigInteger('size');
-            $table->foreignId('uploader_id')->constrained('users')->onDelete('cascade');
+            $table->bigInteger('size');
+            $table->unsignedBigInteger('uploader_id')->nullable();
             $table->timestamps();
         });
     }

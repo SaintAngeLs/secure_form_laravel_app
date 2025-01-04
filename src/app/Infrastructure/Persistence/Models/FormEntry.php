@@ -9,5 +9,10 @@ class FormEntry extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['first_name', 'last_name', 'file_path'];
+    protected $fillable = ['first_name', 'last_name', 'file_id'];
+
+    public function file()
+    {
+        return $this->belongsTo(File::class, 'file_id');
+    }
 }

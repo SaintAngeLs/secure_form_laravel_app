@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
             maxFilesize: 2,
             acceptedFiles: 'image/*',
             addRemoveLinks: true,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
             dictDefaultMessage: `
                 <div class="flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -21,6 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="text-blue-600 mt-2">Drag & drop or click to upload an image</p>
                 </div>
             `,
+            success: function (file, response) {
+                if (response.file_id) {
+                    document.querySelector('#file_id').value = response.file_id;
+                    console.log('File uploaded successfully. File ID:', response.file_id);
+                } else {
+                    console.log('File uploaded, but no file ID received.');
+                }
+            },
+            error: function (file, response) {
+                alert('An error occurred while uploading the file. Please try again.');
+            },
         });
+
+        window.clearDropzone = () => dropzone.removeAllFiles(true);
     }
+
 });

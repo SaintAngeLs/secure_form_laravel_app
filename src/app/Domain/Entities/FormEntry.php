@@ -6,13 +6,13 @@ class FormEntry
 {
     private string $firstName;
     private string $lastName;
-    private string $filePath;
+    private int $fileId;
 
-    public function __construct(string $firstName, string $lastName, string $filePath)
+    public function __construct(string $firstName, string $lastName, int $fileId)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
-        $this->filePath = $filePath;
+        $this->fileId = $fileId;
     }
 
     public function getFirstName(): string
@@ -25,8 +25,8 @@ class FormEntry
         return $this->lastName;
     }
 
-    public function getFilePath(): string
+    public function getFileId(): int
     {
-        return $this->filePath;
+        return $this->fileId;
     }
 }

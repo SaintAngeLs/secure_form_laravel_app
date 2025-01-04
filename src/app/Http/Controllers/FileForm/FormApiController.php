@@ -7,35 +7,62 @@ use App\Application\DTO\FormEntryDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFormEntryRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class FormApiController extends Controller
 {
-    private FormEntryService $service;
+    private FormEntryService $formEntryService;
 
-    public function __construct(FormEntryService $service)
+    public function __construct(FormEntryService $formEntryService)
     {
-        $this->service = $service;
+        $this->formEntryService = $formEntryService;
     }
 
     public function store(StoreFormEntryRequest $request): JsonResponse
     {
-        $filePath = $request->file('file')->store('uploads', 'public');
-        $dto = new FormEntryDTO(
-            $request->get('first_name'),
-            $request->get('last_name'),
-            $filePath
-        );
+        Log::info('Request data received in FormApiController@store', [
+            'request_data' => $request->all(),
+        ]);
 
-        if ($this->service->createEntry($dto)) {
-            return response()->json(['message' => 'Form submitted successfully.'], 201);
+        try {
+            $fileId = $request->get('file_id');
+
+            if (!$fileId) {
+                return response()->json(['error' => 'File upload is required.'], 422);
+            }
+
+            $dto = new FormEntryDTO(
+                $request->get('first_name'),
+                $request->get('last_name'),
+                $fileId
+            );
+
+            if ($this->formEntryService->createEntry($dto)) {
+                return response()->json(['message' => 'Form submitted successfully.'], 201);
+            }
+
+            return response()->json(['error' => 'Failed to submit form.'], 500);
+        } catch (\Exception $e) {
+            Log::error("Error in FormApiController@store: {$e->getMessage()}", [
+                'request' => $request->all(),
+                'exception' => $e,
+            ]);
+
+            return response()->json(['error' => 'An error occurred while processing your request.'], 500);
         }
-
-        return response()->json(['message' => 'Failed to submit form.'], 500);
     }
 
     public function index(): JsonResponse
     {
-        $entries = $this->service->getEntries();
-        return response()->json(['data' => $entries], 200);
+        try {
+            $entries = $this->formEntryService->getEntries();
+            return response()->json(['data' => $entries], 200);
+        } catch (\Exception $e) {
+            Log::error("Error in FormApiController@index: {$e->getMessage()}", [
+                'exception' => $e,
+            ]);
+
+            return response()->json(['error' => 'An error occurred while retrieving entries.'], 500);
+        }
     }
 }
