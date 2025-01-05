@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
             url: '/files/upload',
             maxFiles: 1,
             maxFilesize: 2,
-            acceptedFiles: 'image/*',
+            acceptedFiles: 'image/jpeg,image/png,image/jpg,image/gif',
             addRemoveLinks: true,
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -24,26 +24,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="text-blue-600 mt-2">Drag & drop or click to upload an image</p>
                 </div>
             `,
+            dictFileTooBig: 'File size should not exceed 2MB.',
+            dictMaxFilesExceeded: 'You can only upload one file.',
             success: function (file, response) {
                 if (response.file && response.file.id) {
-
                     const fileIdInput = document.querySelector('#file_id');
 
                     if (fileIdInput) {
                         fileIdInput.value = response.file.id;
                     }
-                    
-                    console.log('File uploaded successfully. File ID:', response.file.id);
+
+                    dropzoneElement.classList.remove('border-red-500');
+                    document.querySelector('#file_id_error').textContent = '';
                 } else {
                     console.error('File uploaded, but no file ID received:', response);
                 }
             },
             error: function (file, response) {
-                alert('An error occurred while uploading the file. Please try again.');
+                let errorMessage = response;
+                if (file.size > 2 * 1024 * 1024) {
+                    errorMessage = 'File size should not exceed 2MB.';
+                }
+                if (response.status === 413) {
+                    errorMessage = 'The uploaded file is too large. Please upload a file smaller than 2MB.';
+                }
+                if (typeof response !== 'string') {
+                    errorMessage = 'An error occurred while uploading the file. Please try again.';
+                }
+
+                const fileErrorElement = document.querySelector('#file_id_error');
+                if (fileErrorElement) {
+                    fileErrorElement.textContent = errorMessage;
+                }
+
+                dropzoneElement.classList.add('border-red-500');
+            },
+            maxfilesexceeded: function (file) {
+                this.removeAllFiles();
+                this.addFile(file);
+            },
+            removedfile: function (file) {
+                const fileIdInput = document.querySelector('#file_id');
+                if (fileIdInput) {
+                    fileIdInput.value = ''; 
+                }
+
+                const previewElement = file.previewElement;
+                if (previewElement != null && previewElement.parentNode != null) {
+                    previewElement.parentNode.removeChild(previewElement);
+                }
             },
         });
 
         window.clearDropzone = () => dropzone.removeAllFiles(true);
     }
-
 });

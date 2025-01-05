@@ -1,3 +1,8 @@
+import $ from 'jquery';
+import 'jquery-validation';
+
+window.$ = window.jQuery = $;
+
 import './bootstrap';
 import './dropzone.js'
 import './formEntrySubmit.js'

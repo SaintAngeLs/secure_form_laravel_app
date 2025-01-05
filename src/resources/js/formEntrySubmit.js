@@ -1,11 +1,64 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('#form-entry');
+    $('#form-entry').validate({
+        rules: {
+            first_name: {
+                required: true,
+                minlength: 3
+            },
+            last_name: {
+                required: true,
+                minlength: 3
+            },
+            file_id: {
+                required: true
+            }
+        },
+        messages: {
+            first_name: {
+                required: "First Name is required.",
+                minlength: "First Name must be at least 3 characters long."
+            },
+            last_name: {
+                required: "Last Name is required.",
+                minlength: "Last Name must be at least 3 characters long."
+            },
+            file_id: {
+                required: "Please upload a file."
+            }
+        },
+        errorElement: "div",
+        errorPlacement: function (error, element) {
+            error.addClass("text-red-500 text-sm");
+            element.closest("div").append(error);
+        },
+        highlight: function (element) {
+            $(element).addClass("border-red-500");
+        },
+        unhighlight: function (element) {
+            $(element).removeClass("border-red-500");
+        },
+        invalidHandler: function (event, validator) {
+            const fileId = document.querySelector('#file_id').value;
+            const dropzoneElement = document.querySelector('#file-dropzone');
+            const fileErrorElement = document.querySelector('#file_id_error');
 
-    if (form) {
-        form.addEventListener('submit', async (event) => {
+            if (!fileId) {
+                dropzoneElement.classList.add('border-red-500');
+                fileErrorElement.textContent = "Please upload a file.";
+            } else {
+                dropzoneElement.classList.remove('border-red-500');
+                fileErrorElement.textContent = '';
+            }
+        },
+        submitHandler: async function (form, event) {
             event.preventDefault();
 
             const formData = new FormData(form);
+            const submitButton = $(form).find('button[type="submit"]');
+
+            submitButton.prop('disabled', true);
+
+            document.querySelectorAll('.text-red-500').forEach(el => el.textContent = '');
 
             try {
                 const response = await fetch('/form/create', {
@@ -29,16 +82,31 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.clearDropzone();
                     }
                 } else {
-                    const errorMessage = result.error || 'An error occurred while submitting the form.';
-                    showPopup('Error', errorMessage, 'error');
+                    if (result.errors) {
+                        for (const [field, messages] of Object.entries(result.errors)) {
+                            const errorElement = document.getElementById(`${field}_error`);
+                            if (errorElement) {
+                                errorElement.textContent = messages.join(', ');
+                            }
+                        }
+                    }
+
+                    if (result.message) {
+                        showPopup('Error', result.message, 'error');
+                    }
                 }
             } catch (error) {
                 showPopup('Error', 'An unexpected error occurred. Please try again later.', 'error');
                 console.error('Error during form submission:', error);
+            } finally {
+                submitButton.prop('disabled', false);
             }
-        });
-    }
+        }
+    });
 });
+
+
+
 
 function showPopup(title, message, type) {
     const popupContainer = document.createElement('div');
