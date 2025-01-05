@@ -25,11 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `,
             success: function (file, response) {
-                if (response.file_id) {
-                    document.querySelector('#file_id').value = response.file_id;
-                    console.log('File uploaded successfully. File ID:', response.file_id);
+                if (response.file && response.file.id) {
+
+                    const fileIdInput = document.querySelector('#file_id');
+
+                    if (fileIdInput) {
+                        fileIdInput.value = response.file.id;
+                    }
+                    
+                    console.log('File uploaded successfully. File ID:', response.file.id);
                 } else {
-                    console.log('File uploaded, but no file ID received.');
+                    console.error('File uploaded, but no file ID received:', response);
                 }
             },
             error: function (file, response) {

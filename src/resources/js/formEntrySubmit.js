@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('form');
+    const form = document.querySelector('#form-entry');
 
     if (form) {
         form.addEventListener('submit', async (event) => {
@@ -20,35 +20,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (response.ok) {
-                    showPopup('Success', result.message || 'Form submitted successfully.');
-                    form.reset();
+                    showPopup('Success', result.message || 'Form submitted successfully.', 'success');
 
-                    document.querySelector('#file_id').value = ''; // Clear the file ID
+                    form.reset();
+                    document.querySelector('#file_id').value = '';
 
                     if (window.clearDropzone) {
                         window.clearDropzone();
                     }
                 } else {
                     const errorMessage = result.error || 'An error occurred while submitting the form.';
-                    showPopup('Error', errorMessage);
+                    showPopup('Error', errorMessage, 'error');
                 }
             } catch (error) {
-                showPopup('Error', 'An unexpected error occurred. Please try again later.');
+                showPopup('Error', 'An unexpected error occurred. Please try again later.', 'error');
                 console.error('Error during form submission:', error);
             }
         });
     }
 });
 
-function showPopup(title, message) {
+function showPopup(title, message, type) {
     const popupContainer = document.createElement('div');
-    popupContainer.className = 'popup-container';
+    popupContainer.className = `popup-container ${type}`;
 
     popupContainer.innerHTML = `
         <div class="popup">
-            <h2>${title}</h2>
-            <p>${message}</p>
-            <button id="popup-close-btn">Close</button>
+            <h2 class="popup-title">${title}</h2>
+            <p class="popup-message">${message}</p>
+            <button id="popup-close-btn" class="popup-button">Close</button>
         </div>
     `;
 
@@ -73,6 +73,7 @@ style.textContent = `
         justify-content: center;
         align-items: center;
         z-index: 9999;
+        animation: fadeIn 0.3s ease;
     }
 
     .popup {
@@ -81,27 +82,49 @@ style.textContent = `
         border-radius: 10px;
         text-align: center;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 90%;
     }
 
-    .popup h2 {
-        margin: 0 0 10px;
+    .popup-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
     }
 
-    .popup p {
-        margin: 0 0 20px;
+    .popup-message {
+        font-size: 1rem;
+        margin-bottom: 20px;
     }
 
-    .popup button {
+    .popup-button {
         padding: 10px 20px;
         background: #007bff;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
-    .popup button:hover {
+    .popup-button:hover {
         background: #0056b3;
+    }
+
+    .popup-container.success .popup {
+        border-left: 5px solid #28a745;
+    }
+
+    .popup-container.error .popup {
+        border-left: 5px solid #dc3545;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
 `;
 document.head.appendChild(style);
