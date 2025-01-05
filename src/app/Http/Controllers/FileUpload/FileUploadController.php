@@ -38,7 +38,7 @@ class FileUploadController extends Controller
             Log::error("File upload error: {$e->getMessage()}", [
                 'exception' => $e,
                 'request' => $request->all(),
-            ]);
+            ]); 
 
             return response()->json([
                 'error' => 'An error occurred during file upload. Please try again later.',

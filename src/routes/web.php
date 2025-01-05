@@ -13,7 +13,7 @@ Route::post('/form/create', [FormApiController::class, 'store'])->name('form.cre
 Route::post('/files/upload', [FileUploadController::class, 'upload'])->name('files.index');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', action: [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/entry/{id}', [DashboardController::class, 'show'])->name('dashboard.show');
 });
 

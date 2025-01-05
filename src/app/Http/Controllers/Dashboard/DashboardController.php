@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SearchFormEntryRequest;
 use App\Infrastructure\Persistence\Models\FormEntry;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index(SearchFormEntryRequest $request)
     {
         $query = FormEntry::with('file');
 
-        // Handle search
-        if ($request->has('search') && $request->input('search')) {
+        if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where('first_name', 'LIKE', "%{$search}%")
                 ->orWhere('last_name', 'LIKE', "%{$search}%")
@@ -22,7 +22,6 @@ class DashboardController extends Controller
                 });
         }
 
-        // Handle per-page option
         $perPage = $request->input('per_page', 10);
 
         $formEntries = $query->paginate($perPage);

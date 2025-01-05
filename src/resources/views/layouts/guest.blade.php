@@ -8,7 +8,12 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
-        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/dropzone.js'])
+        @if (app()->environment('local'))
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @else
+            <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+            <script src="{{ mix('js/app.js') }}" defer></script>
+        @endif
     </head>
 
     <body class="bg-gradient-to-br from-blue-50 to-blue-100 text-gray-900 flex flex-col min-h-screen font-sans antialiased">

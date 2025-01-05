@@ -1,0 +1,15 @@
+{
+    "Servers": {
+      "1": {
+        "Group": "Servers",
+        "Name": "Secure Form PostgreSQL",
+        "Host": "secure_form_postgres",
+        "Port": 5432,
+        "MaintenanceDB": "secure_form_laravel",
+        "Username": "secure_form_laravel_user",
+        "Password": "secure_form_laravel_user_password",
+        "SSLMode": "prefer",
+        "Favorite": true
+      }
+    }
+  }
