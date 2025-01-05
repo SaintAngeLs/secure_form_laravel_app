@@ -4,14 +4,29 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Persistence\Models\FormEntry;
-use App\Infrastructure\Persistence\Models\File;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $formEntries = FormEntry::with('file')->get();
+        $query = FormEntry::with('file');
+
+        // Handle search
+        if ($request->has('search') && $request->input('search')) {
+            $search = $request->input('search');
+            $query->where('first_name', 'LIKE', "%{$search}%")
+                ->orWhere('last_name', 'LIKE', "%{$search}%")
+                ->orWhereHas('file', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%");
+                });
+        }
+
+        // Handle per-page option
+        $perPage = $request->input('per_page', 10);
+
+        $formEntries = $query->paginate($perPage);
+
         return view('admin_form_entries.index', compact('formEntries'));
     }
 
@@ -21,5 +36,4 @@ class DashboardController extends Controller
 
         return view('admin_form_entries.show', compact('entry'));
     }
-
 }
