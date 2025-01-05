@@ -28,6 +28,8 @@ class FormApiController extends Controller
      * @OA\Post(
      *     path="/api/form",
      *     summary="Submit form",
+     *     summary="Submit a form",
+     *     tags={"Form Submission"},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             @OA\Property(property="first_name", type="string"),
