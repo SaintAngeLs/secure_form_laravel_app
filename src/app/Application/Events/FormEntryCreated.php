@@ -2,7 +2,7 @@
 
 namespace App\Application\Events;
 
-use App\Infrastructure\Persistence\Models\FormEntry;
+use App\Domain\Entities\FormEntry as DomainFormEntry;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -14,12 +14,12 @@ class FormEntryCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public FormEntry $formEntry;
+    public DomainFormEntry $formEntry;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(FormEntry $formEntry)
+    public function __construct(DomainFormEntry $formEntry)
     {
         $this->formEntry = $formEntry;
     }
@@ -42,15 +42,9 @@ class FormEntryCreated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'id' => $this->formEntry->id,
-            'first_name' => $this->formEntry->first_name,
-            'last_name' => $this->formEntry->last_name,
-            'file' => $this->formEntry->file ? [
-                'id' => $this->formEntry->file->id,
-                'name' => $this->formEntry->file->name,
-                'path' => $this->formEntry->file->path,
-            ] : null,
-            'created_at' => $this->formEntry->created_at->toDateTimeString(),
+            'first_name' => $this->formEntry->getFirstName(),
+            'last_name' => $this->formEntry->getLastName(),
+            'file_id' => $this->formEntry->getFileId(),
         ];
     }
 }
