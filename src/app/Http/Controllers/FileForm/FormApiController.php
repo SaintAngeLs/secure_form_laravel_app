@@ -9,6 +9,12 @@ use App\Http\Requests\StoreFormEntryRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @OA\Info(
+ *     title="Secure Form API",
+ *     version="1.0.0",
+ * )
+ */
 class FormApiController extends Controller
 {
     private FormEntryService $formEntryService;
@@ -18,6 +24,21 @@ class FormApiController extends Controller
         $this->formEntryService = $formEntryService;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/form",
+     *     summary="Submit form",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="first_name", type="string"),
+     *             @OA\Property(property="last_name", type="string"),
+     *             @OA\Property(property="file_id", type="integer"),
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Form submitted successfully"),
+     *     @OA\Response(response=422, description="Validation error"),
+     * )
+     */
     public function store(StoreFormEntryRequest $request): JsonResponse
     {
         Log::info('Request data received in FormApiController@store', [

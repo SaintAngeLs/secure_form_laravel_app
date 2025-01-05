@@ -17,10 +17,36 @@ class FileUploadController extends Controller
     }
 
     /**
-     * Handles file upload and returns a FileDTO response.
-     *
-     * @param UploadFileRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     path="/files/upload",
+     *     summary="Upload a file",
+     *     tags={"File Upload"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="file", type="file", description="File to upload")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="File uploaded successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="File uploaded successfully"),
+     *             @OA\Property(property="file", type="object", description="Uploaded file details")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="An error occurred during file upload",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred during file upload. Please try again later."),
+     *             @OA\Property(property="details", type="string", example="Error details here.")
+     *         )
+     *     )
+     * )
      */
     public function upload(UploadFileRequest $request)
     {
@@ -38,35 +64,11 @@ class FileUploadController extends Controller
             Log::error("File upload error: {$e->getMessage()}", [
                 'exception' => $e,
                 'request' => $request->all(),
-            ]); 
+            ]);
 
             return response()->json([
                 'error' => 'An error occurred during file upload. Please try again later.',
                 'details' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Lists all uploaded files.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
-    {
-        try {
-            $files = $this->fileService->getAllFiles();
-
-            return response()->json([
-                'files' => $files,
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error("Error fetching files: {$e->getMessage()}", [
-                'exception' => $e,
-            ]);
-
-            return response()->json([
-                'error' => 'An error occurred while fetching files.',
             ], 500);
         }
     }

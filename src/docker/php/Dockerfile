@@ -20,7 +20,7 @@ COPY . .
 RUN cp /var/www/html/docker/.env.docker /var/www/html/.env || true
 
 # Set permissions
-RUN chmod -R 777 storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \

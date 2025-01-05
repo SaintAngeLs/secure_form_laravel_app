@@ -1,5 +1,8 @@
 #!/bin/sh
 
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+
 echo "Waiting for database connection..."
 while ! nc -z $DB_HOST 5432; do
   sleep 1
