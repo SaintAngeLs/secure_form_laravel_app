@@ -79,14 +79,18 @@ Ensure the following tools are installed:
 
 5. **Access the Application**:
    - **Frontend**: [http://localhost:9090](http://localhost:9090)
-    > **Note**: You can register users using **Laravel Breeze** or use the pre-seeded test user:
-    > - **Email**: `test@example.com`
-    > - **Password**: `testtest`
+        > **Note**: You can register users using **Laravel Breeze** or use the pre-seeded test user:
+        > - **Email**: `test@example.com`
+        > - **Password**: `testtest`
 
    - **API Documentation**: [http://localhost:9090/api/documentation](http://localhost:9090/api/documentation)
 
    - **Kafka**: [http://localhost:8081](http://localhost:8081)
-   - **gAdmin**: [http://localhost:5050](http://localhost:5050)
+   - **PgAdmin**: [http://localhost:5050](http://localhost:5050)
+        > **Note**: You cansign in to PgAdmin dashboard as a user:
+        > - **Email**: `admin@example.com`
+        > - **Password**: `admin`
+
 
 ---
 
