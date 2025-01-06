@@ -2,12 +2,13 @@
 
 ## Overview
 
-The **Secure Form Laravel Application** is a hybrid modular monolith built with **Clean Architecture** and **Domain-Driven Design (DDD)** principles. This application allows users to submit forms and upload files in a secure and efficient manner. It features a robust backend built with Laravel, a frontend with responsive design, and support for integrations with AWS S3 for file storage.
+The **Secure Form Laravel Application** is a hybrid modular monolith built with **Clean Architecture** and **Domain-Driven Design (DDD)** principles. This application allows users to submit forms and upload files in a secure and efficient manner. It integrates an event-driven architecture powered by Kafka for asynchronous form submission processing.
 
 ## Key Features
 
 - **File Upload**: Securely upload files and retrieve them using file metadata.
-- **Form Submission**: Users can submit detailed forms that are stored and accessible for future reference.
+- **Form Submission**: Users can submit detailed forms stored in the database.
+- **Asynchronous Processing**: Form submissions are processed asynchronously using Kafka as the message broker.
 - **Pagination & Search**: Provides paginated lists of form entries with search functionality.
 - **Swagger Documentation**: API documentation using Swagger UI.
 - **Clean Architecture**: Separation of concerns between domain, application, infrastructure, and presentation layers.
@@ -15,6 +16,7 @@ The **Secure Form Laravel Application** is a hybrid modular monolith built with 
 - **Docker Support**: Simplified local development with Docker containers.
 
 ---
+
 
 ## Technological Stack
 
@@ -156,6 +158,15 @@ The **UnusedFilesCleaner** service (`App\Infrastructure\Services\UnusedFilesClea
 > **Key Components**  
 > - **Topic**: `form-entries`  
 > - **Consumer Group**: defaults to `"default-consumer-group"` (configurable in `MessageBroker` constructor)  
+
+###  Asynchronous Form Submission Processing:
+
+ - The **FormSubmissionsProcessor** subscribes to the form-submissions topic and processes incoming messages.
+ - Messages are decoded and stored in the database.
+ - Message Processing Command:
+
+ - The consumer logic is encapsulated in a Laravel Artisan command `app:start-form-submissions-processor`.
+ - This command is executed by the `form_submissions_processor` container.
 
 ### The Background Consumer Job
 
