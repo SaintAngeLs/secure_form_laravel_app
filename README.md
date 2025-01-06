@@ -90,9 +90,96 @@ Ensure the following tools are installed:
         > **Note**: You cansign in to PgAdmin dashboard as a user:
         > - **Email**: `admin@example.com`
         > - **Password**: `admin`
+   - **Laravel Telescope**: [http://localhost:9090/telescope](http://localhost:9090/telescope) -- is not secured by auth.
 
 
 ---
+
+# Brief Routes Documentation
+
+## Public Routes (No Authentication Required)
+- **Homepage**:  
+  `GET /`  
+  Displays the user form.  
+  **Controller**: `FormViewController@userForm`  
+  **Route Name**: `form.userForm`
+
+- **Create Form Entry**:  
+  `POST /form/create`  
+  Submits a new form entry.  
+  **Controller**: `FormApiController@store`  
+  **Route Name**: `form.create`
+
+- **File Upload**:  
+  `POST /files/upload`  
+  Handles file uploads.  
+  **Controller**: `FileUploadController@upload`  
+  **Route Name**: `files.index`
+
+---
+
+## Secured Routes (Authentication Required)
+- **Dashboard**:  
+  `GET /dashboard`  
+  Displays the user dashboard.  
+  **Controller**: `DashboardController@index`  
+  **Route Name**: `dashboard`
+
+- **Dashboard Entry Details**:  
+  `GET /dashboard/entry/{id}`  
+  Shows details of a specific dashboard entry.  
+  **Controller**: `DashboardController@show`  
+  **Route Name**: `dashboard.show`
+
+---
+
+## Kafka Publish/Subscribe Mechanism
+
+### Overview
+
+This application integrates **Kafka** as an event-driven mechanism for decoupling certain tasks. Currently, the system **publishes** messages to the `form-entries` topic whenever a new form entry is created. Meanwhile, a dedicated **consumer** service runs in the background to process these messages and clean up unused files.
+
+### Publishing Messages
+
+Inside the application, messages are produced by calling:
+
+```php
+$this->messageBroker->publishAsync('form-entries', json_encode($data));
+```
+
+The `MessageBroker` class is responsible for creating a **Kafka producer** and sending messages to the specified topic. The producer is configured in `App\Infrastructure\Services\MessageBroker::publishAsync()`.
+
+### Subscribing to Messages & Cleaning Unused Files
+
+The **UnusedFilesCleaner** service (`App\Infrastructure\Services\UnusedFilesCleaner`) listens to the `form-entries` topic to perform cleanup of unused files. It uses the `MessageBroker::subscribeAsync()` method, which implements a **high-level Kafka consumer**. This consumer runs in an infinite loop, polling for new events.
+
+> **Key Components**  
+> - **Topic**: `form-entries`  
+> - **Consumer Group**: defaults to `"default-consumer-group"` (configurable in `MessageBroker` constructor)  
+
+### The Background Consumer Job
+
+A **Laravel Artisan Command** called `app:start-file-cleanup-listener` is provided to run the consumer logic indefinitely. In `docker-compose.yml`, the `kafka-consumer` service automatically invokes:
+
+```bash
+php artisan app:start-file-cleanup-listener
+```
+
+Under the hood, this command calls `UnusedFilesCleaner->handleUnusedFiles()`, which subscribes to the `form-entries` topic and processes any incoming events to remove orphans (unused files older than 5 minutes).
+
+#### Running the Consumer Manually
+
+If you want to run the cleanup listener manually (instead of via the `kafka-consumer` container), you can do:
+
+```bash
+docker exec -it secure_form_app php artisan app:start-file-cleanup-listener
+```
+
+Or on your local machine (if you have PHP and dependencies installed):
+
+```bash
+php artisan app:start-file-cleanup-listener
+```
 
 ## Directory Structure
 
