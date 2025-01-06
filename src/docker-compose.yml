@@ -81,10 +81,22 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+    networks:
+      - app-network
+
+  kafka-consumer:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: kafka_consumer
+    command: ["php", "artisan", "app:start-file-cleanup-listener"]
+    depends_on:
+      - kafka
     networks:
       - app-network
 
@@ -112,8 +124,56 @@ services:
     networks:
       - app-network
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    container_name: secure_form_elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    networks:
+      - app-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    container_name: secure_form_kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://secure_form_elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.9
+    container_name: secure_form_logstash
+    volumes:
+      - ./src/docker/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logs:/var/log/app
+    ports:
+      - 5044:5044
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: secure_form_portainer
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - 9000:9000
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
+  portainer_data:
 
 networks:
   app-network:

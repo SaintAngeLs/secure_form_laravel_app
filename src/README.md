@@ -133,3 +133,17 @@ AWS_USE_PATH_STYLE_ENDPOINT=false
 
 VITE_APP_NAME="${APP_NAME}"
 ```
+
+for the case 'There is no existing directory at "/var/www/html/storage/logs" and it could not be created: Permission denied
+'
+```bash
+ sudo chown -R $USER:www-data storage
+
+sudo chown -R $USER:www-data bootstrap/cache
+
+sudo chmod -R 775 storage
+
+sudo chmod -R 775 bootstrap/cache
+
+composer update
+```

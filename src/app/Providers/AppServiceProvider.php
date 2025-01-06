@@ -9,6 +9,7 @@ use App\Application\Services\Infrastructure\InfrastructureService;
 use App\Domain\Repositories\IFileRepository;
 use App\Infrastructure\Services\MessageBroker;
 use App\Infrastructure\Repositories\Files\FileRepository;
+use App\Infrastructure\Services\UnusedFilesCleaner;
 use Illuminate\Support\ServiceProvider;
 use App\Domain\Repositories\IFormEntryRepository;
 use App\Infrastructure\Repositories\FormEntry\FormEntryRepository;
@@ -28,13 +29,14 @@ class AppServiceProvider extends ServiceProvider
         // $this->app->bind(IMessageBroker::class, MessageBroker::class);
 
         $this->app->singleton(IMessageBroker::class, function ($app) {
-            return new MessageBroker(env('KAFKA_BROKERS', 'localhost:9092'));
+            return new MessageBroker(env('KAFKA_BROKERS', 'kafka:9092'));
         });
 
         $this->app->bind(FormEntryService::class, function ($app) {
             return new FormEntryService(
                 $app->make(IFormEntryRepository::class),
-                $app->make(IMessageBroker::class)
+                $app->make(IMessageBroker::class),
+                $app->make(FileService::class),
             );
         });
 
@@ -48,6 +50,16 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(FileValidationService::class)
             );
         });
+
+        $this->app->singleton(UnusedFilesCleaner::class, function ($app) {
+            return new UnusedFilesCleaner(
+                $app->make(IMessageBroker::class)
+            );
+        });
+
+        if ($this->app->isLocal()) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+        }
     }
 
     /**

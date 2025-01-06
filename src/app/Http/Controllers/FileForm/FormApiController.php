@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\FileForm;
 
+use App\Application\Exceptions\FileNotFoundException;
 use App\Application\Services\FormEntry\FormEntryService;
 use App\Application\DTO\FormEntryDTO;
 use App\Http\Controllers\Controller;
@@ -65,6 +66,12 @@ class FormApiController extends Controller
             }
 
             return response()->json(['error' => 'Failed to submit form.'], 500);
+        } catch (FileNotFoundException $e) {
+            Log::warning("File not found in FormApiController@store: {$e->getMessage()}", [
+                'file_id' => $request->get('file_id'),
+            ]);
+
+            return response()->json(['error' => $e->getMessage()], 404);
         } catch (\Exception $e) {
             Log::error("Error in FormApiController@store: {$e->getMessage()}", [
                 'request' => $request->all(),

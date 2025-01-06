@@ -2,6 +2,7 @@
 
 namespace App\Application\Services\FormEntry;
 
+use App\Application\Exceptions\FileNotFoundException;
 use App\Domain\Repositories\IFormEntryRepository;
 use App\Application\DTO\FormEntryDTO;
 use App\Domain\Entities\FormEntry;
@@ -10,21 +11,34 @@ use Illuminate\Support\Facades\Log;
 use App\Application\Events\FormEntryCreated;
 use Illuminate\Support\Facades\Event;
 use App\Application\Services\Infrastructure\IMessageBroker;
+use App\Application\Services\Files\FileService;
 
 class FormEntryService
 {
     private IFormEntryRepository $repository;
     private IMessageBroker $messageBroker;
+    private FileService $fileService;
 
-    public function __construct(IFormEntryRepository $repository, IMessageBroker $messageBroker)
-    {
+    public function __construct(
+        IFormEntryRepository $repository,
+        IMessageBroker $messageBroker,
+        FileService $fileService
+    ) {
         $this->repository = $repository;
         $this->messageBroker = $messageBroker;
+        $this->fileService = $fileService;
     }
 
     public function createEntry(FormEntryDTO $dto): bool
     {
         try {
+            $file = $this->fileService->getFileById($dto->fileId);
+
+            if (!$file) {
+                Log::warning("File with ID {$dto->fileId} not found.");
+                throw new FileNotFoundException("The file with ID {$dto->fileId} does not exist.");
+            }
+
             $formEntry = new FormEntry($dto->firstName, $dto->lastName, $dto->fileId);
 
             $result = $this->repository->save($formEntry);

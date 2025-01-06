@@ -38,5 +38,17 @@ php artisan route:cache
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 
+# Wait for Kafka to be ready
+echo "Waiting for Kafka to be ready..."
+while ! nc -z kafka 9092; do
+  sleep 10
+done
+
+echo "Starting the unused file cleanup listener in the background..."
+php artisan app:start-file-cleanup-listener &
+
+echo "Publishing Telescope assets..."
+php artisan telescope:publish
+
 echo "Starting PHP-FPM..."
 php-fpm
