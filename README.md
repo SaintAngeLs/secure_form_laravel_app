@@ -54,7 +54,7 @@ Ensure the following tools are installed:
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/SaintAngeLs/secure_form_laravel_app.git
-   cd secure_form_laravel_app
+   cd secure_form_laravel_app/src
    ```
 
 2. **Set Up Environment Variables**:
