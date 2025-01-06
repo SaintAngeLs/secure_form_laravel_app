@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\FileForm;
 
 use App\Application\Exceptions\FileNotFoundException;
+use App\Application\Events\FormSubmittedEvent;
+use App\Application\Services\Infrastructure\IMessageBroker;
 use App\Application\Services\FormEntry\FormEntryService;
 use App\Application\DTO\FormEntryDTO;
 use App\Http\Controllers\Controller;
@@ -18,13 +20,13 @@ use Illuminate\Support\Facades\Log;
  */
 class FormApiController extends Controller
 {
-    private FormEntryService $formEntryService;
+    private IMessageBroker $messageBroker;
+    // private FormEntryService $formEntryService;
 
-    public function __construct(FormEntryService $formEntryService)
+    public function __construct(IMessageBroker $messageBroker)
     {
-        $this->formEntryService = $formEntryService;
+        $this->messageBroker = $messageBroker;
     }
-
     /**
      * @OA\Post(
      *     path="/api/form",
@@ -44,10 +46,6 @@ class FormApiController extends Controller
      */
     public function store(StoreFormEntryRequest $request): JsonResponse
     {
-        Log::info('Request data received in FormApiController@store', [
-            'request_data' => $request->all(),
-        ]);
-
         try {
             $fileId = $request->get('file_id');
 
@@ -55,17 +53,22 @@ class FormApiController extends Controller
                 return response()->json(['error' => 'File upload is required.'], 422);
             }
 
-            $dto = new FormEntryDTO(
+            $formEntryDTO = new FormEntryDTO(
                 $request->get('first_name'),
                 $request->get('last_name'),
                 $fileId
             );
 
-            if ($this->formEntryService->createEntry($dto)) {
-                return response()->json(['message' => 'Form submitted successfully.'], 201);
-            }
+            // if ($this->formEntryService->createEntry($dto)) {
+            //     return response()->json(['message' => 'Form submitted successfully.'], 201);
+            // }
 
-            return response()->json(['error' => 'Failed to submit form.'], 500);
+            // return response()->json(['error' => 'Failed to submit form.'], 500);
+
+            $this->messageBroker->publishAsync('form-submissions', json_encode($formEntryDTO));
+
+             return response()->json(['message' => 'Form submitted successfully and is being processed.'], 201);
+
         } catch (FileNotFoundException $e) {
             Log::warning("File not found in FormApiController@store: {$e->getMessage()}", [
                 'file_id' => $request->get('file_id'),
@@ -79,20 +82,6 @@ class FormApiController extends Controller
             ]);
 
             return response()->json(['error' => 'An error occurred while processing your request.'], 500);
-        }
-    }
-
-    public function index(): JsonResponse
-    {
-        try {
-            $entries = $this->formEntryService->getEntries();
-            return response()->json(['data' => $entries], 200);
-        } catch (\Exception $e) {
-            Log::error("Error in FormApiController@index: {$e->getMessage()}", [
-                'exception' => $e,
-            ]);
-
-            return response()->json(['error' => 'An error occurred while retrieving entries.'], 500);
         }
     }
 }

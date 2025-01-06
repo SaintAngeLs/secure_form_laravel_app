@@ -10,6 +10,7 @@ use App\Domain\Repositories\IFileRepository;
 use App\Infrastructure\Services\MessageBroker;
 use App\Infrastructure\Repositories\Files\FileRepository;
 use App\Infrastructure\Services\UnusedFilesCleaner;
+use App\Infrastructure\Services\FormSubmissionsProcessor;
 use Illuminate\Support\ServiceProvider;
 use App\Domain\Repositories\IFormEntryRepository;
 use App\Infrastructure\Repositories\FormEntry\FormEntryRepository;
@@ -54,6 +55,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(UnusedFilesCleaner::class, function ($app) {
             return new UnusedFilesCleaner(
                 $app->make(IMessageBroker::class)
+            );
+        });
+
+        $this->app->singleton(FormSubmissionsProcessor::class, function ($app) {
+            return new FormSubmissionsProcessor(
+                $app->make(IMessageBroker::class),
+                $app->make(FormEntryService::class)
             );
         });
 

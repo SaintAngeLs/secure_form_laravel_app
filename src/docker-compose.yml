@@ -106,6 +106,18 @@ services:
     networks:
       - app-network
 
+  kafka-form-processor:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: form_submissions_processor
+    command: ["php", "artisan", "app:start-form-submissions-processor"]
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: secure_form_zookeeper
