@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Log;
 class FormApiController extends Controller
 {
     private IMessageBroker $messageBroker;
-    // private FormEntryService $formEntryService;
 
     public function __construct(IMessageBroker $messageBroker)
     {
@@ -40,7 +39,7 @@ class FormApiController extends Controller
      *             @OA\Property(property="file_id", type="integer"),
      *         )
      *     ),
-     *     @OA\Response(response=201, description="Form submitted successfully"),
+     *     @OA\Response(response=201, description="Form submitted successfully and is being processed."),
      *     @OA\Response(response=422, description="Validation error"),
      * )
      */
@@ -58,12 +57,6 @@ class FormApiController extends Controller
                 $request->get('last_name'),
                 $fileId
             );
-
-            // if ($this->formEntryService->createEntry($dto)) {
-            //     return response()->json(['message' => 'Form submitted successfully.'], 201);
-            // }
-
-            // return response()->json(['error' => 'Failed to submit form.'], 500);
 
             $this->messageBroker->publishAsync('form-submissions', json_encode($formEntryDTO));
 
