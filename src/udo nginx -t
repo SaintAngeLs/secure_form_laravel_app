@@ -1,0 +1,52 @@
+Jan 05 09:12:53 kali systemd[1]: Starting nginx.service - A high performance web server and a reverse proxy server...
+[0;38;5;245m░░ [0m[0;32mSubject: A start job for unit nginx.service has begun execution[0m
+[0;38;5;245m░░[0m [0;32mDefined-By: systemd[0m
+[0;38;5;245m░░[0m [0;32mSupport: https://www.debian.org/support[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mA start job for unit nginx.service has begun execution.[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mThe job identifier is 105.[0m
+Jan 05 09:12:53 kali systemd[1]: nginx.service: Can't open PID file /run/nginx.pid (yet?) after start: No such file or directory
+Jan 05 09:14:23 kali systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mnginx.service: start operation timed out. Terminating.[0m
+Jan 05 09:14:23 kali systemd[1]: [0;1;39m[0;1;31m[0;1;39mnginx.service: Killing process 1155 (nginx) with signal SIGKILL.[0m
+Jan 05 09:14:23 kali systemd[1]: [0;1;39m[0;1;31m[0;1;39mnginx.service: Killing process 1156 (nginx) with signal SIGKILL.[0m
+Jan 05 09:14:23 kali systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mnginx.service: Failed with result 'timeout'.[0m
+[0;38;5;245m░░ [0m[0;32mSubject: Unit failed[0m
+[0;38;5;245m░░[0m [0;32mDefined-By: systemd[0m
+[0;38;5;245m░░[0m [0;32mSupport: https://www.debian.org/support[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mThe unit nginx.service has entered the 'failed' state with result 'timeout'.[0m
+Jan 05 09:14:23 kali systemd[1]: [0;1;31m[0;1;39m[0;1;31mFailed to start nginx.service - A high performance web server and a reverse proxy server.[0m
+[0;38;5;245m░░ [0m[0;32mSubject: A start job for unit nginx.service has failed[0m
+[0;38;5;245m░░[0m [0;32mDefined-By: systemd[0m
+[0;38;5;245m░░[0m [0;32mSupport: https://www.debian.org/support[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mA start job for unit nginx.service has finished with a failure.[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mThe job identifier is 105 and the job result is failed.[0m
+Jan 05 23:25:09 kali systemd[1]: Starting nginx.service - A high performance web server and a reverse proxy server...
+[0;38;5;245m░░ [0m[0;32mSubject: A start job for unit nginx.service has begun execution[0m
+[0;38;5;245m░░[0m [0;32mDefined-By: systemd[0m
+[0;38;5;245m░░[0m [0;32mSupport: https://www.debian.org/support[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mA start job for unit nginx.service has begun execution.[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mThe job identifier is 519301.[0m
+Jan 05 23:25:09 kali systemd[1]: nginx.service: Can't open PID file /run/nginx.pid (yet?) after start: No such file or directory
+Jan 05 23:26:39 kali systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mnginx.service: start operation timed out. Terminating.[0m
+Jan 05 23:26:39 kali systemd[1]: [0;1;39m[0;1;31m[0;1;39mnginx.service: Killing process 1497054 (nginx) with signal SIGKILL.[0m
+Jan 05 23:26:39 kali systemd[1]: [0;1;39m[0;1;31m[0;1;39mnginx.service: Killing process 1497055 (nginx) with signal SIGKILL.[0m
+Jan 05 23:26:39 kali systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mnginx.service: Failed with result 'timeout'.[0m
+[0;38;5;245m░░ [0m[0;32mSubject: Unit failed[0m
+[0;38;5;245m░░[0m [0;32mDefined-By: systemd[0m
+[0;38;5;245m░░[0m [0;32mSupport: https://www.debian.org/support[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mThe unit nginx.service has entered the 'failed' state with result 'timeout'.[0m
+Jan 05 23:26:39 kali systemd[1]: [0;1;31m[0;1;39m[0;1;31mFailed to start nginx.service - A high performance web server and a reverse proxy server.[0m
+[0;38;5;245m░░ [0m[0;32mSubject: A start job for unit nginx.service has failed[0m
+[0;38;5;245m░░[0m [0;32mDefined-By: systemd[0m
+[0;38;5;245m░░[0m [0;32mSupport: https://www.debian.org/support[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mA start job for unit nginx.service has finished with a failure.[0m
+[0;38;5;245m░░[0m [0;32m[0m
+[0;38;5;245m░░[0m [0;32mThe job identifier is 519301 and the job result is failed.[0m

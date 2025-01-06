@@ -1,0 +1,18 @@
+FROM dpage/pgadmin4
+
+
+ENV PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+ENV PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-postgres}
+ENV PGADMIN_CONFIG_SERVER_MODE=False
+ENV PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+
+COPY pgpass /pgpass
+COPY servers.json /pgadmin4/servers.json
+
+# RUN chmod 600 /pgpass
+
+USER root
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+EXPOSE 80
