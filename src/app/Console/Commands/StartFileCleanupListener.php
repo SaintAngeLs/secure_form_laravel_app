@@ -45,7 +45,6 @@ class StartFileCleanupListener extends Command
         $this->info('Starting the unused file cleanup listener...');
 
         try {
-            // Call the handleUnusedFiles method to start the listener
             $this->unusedFilesCleaner->handleUnusedFiles();
         } catch (\Exception $e) {
             $this->error('An error occurred while running the unused file cleanup listener.');
