@@ -12,9 +12,9 @@ services:
     networks:
       - app-network
     depends_on:
+      - kafka
       - db
       - redis
-      - kafka
     env_file:
       - ./docker/.env.docker
     command: ["sh", "/var/www/html/docker/entrypoint.sh"]
@@ -37,15 +37,14 @@ services:
     container_name: secure_form_postgres
     restart: unless-stopped
     environment:
-        POSTGRES_DB: secure_form_laravel
-        POSTGRES_USER: secure_form_laravel_user
-        POSTGRES_PASSWORD: secure_form_laravel_user_password
+      POSTGRES_DB: secure_form_laravel
+      POSTGRES_USER: secure_form_laravel_user
+      POSTGRES_PASSWORD: secure_form_laravel_user_password
     volumes:
-        - postgres_data:/var/lib/postgresql/data
-        - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
-        - app-network
-
+      - app-network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -53,13 +52,10 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
-    #   PGADMIN_CONFIG_SERVER_MODE: "False"
-    #   PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     ports:
       - "5050:80"
     depends_on:
       - db
-    # entrypoint: /bin/sh -c "chmod 600 /pgpass;"
     volumes:
       - ./docker/pgAdmin/pgpass:/.pgpass
       - ./docker/pgAdmin/servers.json:/pgadmin4/servers.json
@@ -72,6 +68,11 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -88,6 +89,11 @@ services:
       - zookeeper
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server=kafka:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   kafka-consumer:
     build:
@@ -109,6 +115,11 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -133,6 +144,11 @@ services:
       - 9200:9200
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.9

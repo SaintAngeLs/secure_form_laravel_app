@@ -24,6 +24,11 @@ if [ ! -d "public/build" ]; then
   npm run build
 fi
 
+if [ ! -d "vendor" ]; then
+    echo "Installing Composer dependencies..."
+    composer install --no-dev --optimize-autoloader
+fi
+
 echo "Running migrations and seeders..."
 php artisan migrate --force
 php artisan db:seed
